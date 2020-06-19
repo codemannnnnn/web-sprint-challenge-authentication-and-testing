@@ -14,7 +14,8 @@ router.post("/register", (req, res) => {
   creds.password = hash;
 
   db("users")
-    .insert(creds)
+    .insert(creds, "id")
+
     .then((e) => {
       res.status(201).json({ data: e, creds });
     })
@@ -27,6 +28,8 @@ router.post("/login", (req, res) => {
   const { username, password } = req.body;
   db("users")
     .select("users.id", "users.username", "users.password")
+    .where({ username: username })
+    .orderBy("id")
     .then(([user]) => {
       console.log("user", user);
       if (user && bcryptjs.compareSync(password, user.password)) {

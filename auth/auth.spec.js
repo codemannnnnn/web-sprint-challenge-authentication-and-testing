@@ -30,7 +30,37 @@ describe("auth", () => {
           password: "password",
         })
         .then((res) => {
-          expect(res.body.data.username).toBe("testing1");
+          expect(res.body.creds.username).toBe("testing1");
+        });
+    });
+  });
+  describe("post /login", () => {
+    beforeEach(async () => {
+      await supertest(server).post("/api/auth/register").send({
+        username: "login",
+        password: "test",
+      });
+    });
+    it("should return a status code of 200", () => {
+      return supertest(server)
+        .post("/api/auth/login")
+        .send({
+          username: "login",
+          password: "test",
+        })
+        .then((res) => {
+          expect(res.status).toBe(200);
+        });
+    });
+    it("should return successful login", () => {
+      return supertest(server)
+        .post("/api/auth/login")
+        .send({
+          username: "login",
+          password: "test",
+        })
+        .then((res) => {
+          expect(res.body.message).toBe("Welcome to our API");
         });
     });
   });
